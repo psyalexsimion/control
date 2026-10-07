@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ro" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CTRL</title>
+<style>
+:root{--bg:#f3f4f1;--card:#fbfbf9;--ink:#1c2432;--mut:#667080;--ac:#7a2e3b;--ac2:#2e4a5e;--bd:#d6d9d3;--soft:#e9ebe6}
+[data-theme=dark]{--bg:#12151c;--card:#1a1f29;--ink:#e8e6df;--mut:#98a2b0;--ac:#e0a1a9;--ac2:#9bb8c9;--bd:#2b3240;--soft:#222937}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:Georgia,'Iowan Old Style',serif;font-weight:600;line-height:1.2;margin:0 0 .5em}
+h1{font-size:2rem}h2{font-size:1.5rem}h3{font-size:1.1rem}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;max-width:760px;margin:auto}
+.logo{font-family:Georgia,serif;font-size:1.5rem;font-weight:700;letter-spacing:.04em}.logo i{color:var(--ac);font-style:normal}
+.tools button{margin-left:6px}
+main{max-width:760px;margin:auto;padding:8px 18px}
+button{font:inherit;cursor:pointer;color:var(--ink);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:9px 14px;min-height:44px}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+.pri{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600}
+[data-theme=dark] .pri{color:#14191a}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px;margin:0 0 14px}
+.mut{color:var(--mut);font-size:.92rem}
+.loop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0}
+.loop span{background:var(--soft);padding:5px 11px;border-radius:99px;font-size:.9rem}
+.loop b{color:var(--ac)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.go{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.go button{text-align:left;padding:14px}
+.go strong{display:block;font-family:Georgia,serif;font-size:1.1rem}
+label{display:block;font-weight:600;margin:16px 0 6px}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px}
+textarea{min-height:76px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:36px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .on,.sc .on{background:var(--ac2);color:var(--bg);border-color:var(--ac2)}
+[data-theme=dark] .chips .on,[data-theme=dark] .sc .on{color:#12151c}
+.sc{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.sc button{padding:6px 2px;font-size:.82rem}
+.bar{height:6px;background:var(--soft);border-radius:9px;margin:0 0 18px;overflow:hidden}.bar div{height:100%;background:var(--ac);transition:width .3s}
+.m{height:10px;background:var(--soft);border-radius:9px;overflow:hidden}.m div{height:100%;background:var(--ac2)}
+.m.hi div{background:var(--ac)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}td,th{border-bottom:1px solid var(--bd);padding:8px 6px;text-align:left;vertical-align:top}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bd);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav{overflow-x:auto;justify-content:center;justify-content:safe center}nav button{flex:1;min-width:46px;white-space:nowrap;max-width:120px;border:0;background:none;font-size:.7rem;padding:6px 2px;border-radius:8px}
+nav button.on{color:var(--ac);font-weight:700;background:var(--soft)}
+/*nd*/.chips button{text-align:left}.tw{overflow-x:auto}
+details{border-top:1px solid var(--bd);padding:8px 0}summary{cursor:pointer;font-weight:600}
+.k{color:var(--mut);font-size:.85rem;margin-top:8px}
+.warn{border-left:3px solid var(--ac);padding-left:12px}
+@media print{nav,header,.row,.noprint{display:none!important}body{background:#fff;color:#000}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="logo">CT<i>R</i>L</div><div class="tools"><button data-a="lang" aria-label="Language" id="bl"></button><button data-a="theme" aria-label="Theme" id="bt"></button></div></header>
+<main id="m"></main>
+<nav id="nv"></nav>
+<script>
+const L={ro:{
+n_home:'Acasă',n_prof:'Profil',n_cyc:'Ciclu',n_exp:'Experiment',n_gd:'Ghid',n_hs:'Istoric',
+h_title:'Nevoia de control',h_sub:'Controlul este de obicei o strategie de siguranță, nu problema în sine. Aici îl înțelegem, îl măsurăm și îl testăm prin experiență.',
+loop:['Incertitudine','Anxietate','Control','Ușurare temporară','Nevoie mai mare de control'],
+h_go:'Începe',h_priv:'Datele rămân doar în acest browser (localStorage). Nimic nu e trimis nicăieri. Folosește un cod în loc de nume complet.',
+d_prof:'18 itemi, 6 zone. Arată ce anume încearcă persoana să controleze și ce direcție terapeutică se potrivește.',
+d_cyc:'Construiește împreună ciclul trigger → interpretare → impuls → comportament → ușurare → cost.',
+d_exp:'Experimentul „cu 20% mai puțin control”: planifici, prezici, încerci, notezi ce s-a întâmplat.',
+start:'Începe',next:'Continuă',back:'Înapoi',save:'Salvează',print:'Printează / PDF',saved:'Salvat în Istoric.',
+client:'Cod client / etichetă (opțional)',step:'Pasul',of:'din',
+dim_iu:'Intoleranța la incertitudine',dim_th:'Controlul gândurilor',dim_em:'Controlul emoțiilor',dim_pf:'Perfecționism',dim_ip:'Control interpersonal',dim_ck:'Verificare și reasigurare',
+sc:['Deloc','Rar','Uneori','Des','Mereu'],lvl:['scăzut','moderat','ridicat'],
+f_iu:'CBT pentru intoleranța la incertitudine + experimente comportamentale',f_th:'Terapie metacognitivă (detached mindfulness, reducerea worry/ruminației)',f_em:'ACT (acceptare, defuziune, valori, acțiune angajată)',f_pf:'CBT pentru perfecționism (experimente de imperfecțiune)',f_ip:'Schema therapy + construirea siguranței interne și toleranța la vulnerabilitate',f_ck:'Evaluează TOC; dacă se confirmă, CBT cu ERP',
+disc:'Chestionar orientativ, nevalidat psihometric, creat pentru discuția clinică. Nu este instrument de diagnostic.',
+top:'Direcții sugerate',
+c1:'Ce încearcă să controleze?',c1h:'Alege tot ce se potrivește.',
+ch:{env:'Mediul, lucrurile',oth:'Alți oameni',fut:'Viitorul',tho:'Gândurile',emo:'Emoțiile / corpul',per:'Performanța',dan:'Posibile pericole'},
+c2:'Ciclul',trig:'Situația declanșatoare',interp:'Ce se teme că se va întâmpla?',anx1:'Anxietate înainte (0-10)',imp:'Impulsul (ce simte că trebuie să facă)',beh:'Ce face concret (comportamentul de control)',
+c3:'Efecte',rel:'Ce se întâmplă imediat după?',anx2:'Anxietate după (0-10)',cost:'Costuri pe termen lung',prot:'De ce crede că îl protejează controlul? (anxietate, rușine, abandon, greșeli, haos)',
+c4:'Rezumat',
+e1:'Situația',sit:'Situație cu risc scăzut',want:'Ce aș vrea să controlez',
+e2:'Predicția',pred:'Ce prezic că se va întâmpla?',
+e3:'Planul',plan:'Ce voi face diferit? (cu ~20% mai puțin control)',
+e4:'După experiment',did:'Ce am făcut efectiv',hap:'Ce s-a întâmplat de fapt',learn:'Ce am învățat (pot tolera că nu știu?)',
+sec:'Anxietate după',
+hs_t:'Istoric salvat',hs_e:'Nimic salvat încă. Finalizează un profil, un ciclu sau un experiment și apasă Salvează.',del:'Șterge',exp:'Exportă JSON',clr:'Șterge tot',conf:'Sigur?',
+ty:{inf:'Control vs influență',prof:'Profil de control',cyc:'Ciclul controlului',exp:'Experiment',nd1:'TSA+ADHD · 4 niveluri',nd2:'TSA+ADHD · Funcția controlului',nd3:'TSA+ADHD · Doza de predictibilitate'},
+g_t:'Ghid clinic',g_i:'Orientare după prezentare',
+g_rows:[['Anxietate + „trebuie să știu”','CBT pentru intoleranța la incertitudine'],['Worry/ruminație, controlul gândurilor','Terapie metacognitivă'],['Evitarea emoțiilor, rigiditate','ACT'],['Perfecționism','CBT pentru perfecționism'],['Verificări, compulsii, 100% certitudine','CBT cu ERP'],['Control interpersonal, pattern vechi','Schema therapy + CBT'],['Control după experiențe traumatice','Tratament focalizat pe traumă, nu simplă expunere la lipsa controlului'],['Fără psihopatologie clară','CBT + IU + experimente comportamentale'],['TSA + ADHD (adult)','Adaptări TSA + strategii ADHD → reglare → IU → experimente graduale (vezi fila TSA+ADHD)']],
+g_p:'Protocol de 8-10 ședințe',g_ps:['1-2 Evaluare și conceptualizare (ciclul)','3 Intoleranța la incertitudine: regulile „trebuie să știu”','4 Lista comportamentelor de siguranță','5-7 Experimente / expuneri graduale (ierarhie)','8 MCT sau ACT, după mecanism','9 Valori și comportament alternativ','10 Prevenirea recăderii: semnale și plan'],
+g_q:'Întrebări cheie',g_qs:['Ce s-ar întâmpla dacă nu ai putea controla?','Care este cel mai rău lucru posibil?','Ce te-a protejat controlul de-a lungul timpului?','Ce faci când apare senzația că trebuie să controlezi?','Ce încerci să obții prin controlul celuilalt?','Ce simți că ai pierde dacă lași lucrurile să se desfășoare singure?'],
+g_w:'Atenție',g_ws:['Obiectivul nu e „renunță la control”, ci alegerea flexibilă: când merită controlat și când poți tolera incertitudinea.','Nu promite „nu se va întâmpla nimic rău”; ținta e toleranța la „nu știu”.','Evită lupta de putere și rolul de „sursă de control” (teme rigide).','Dozează expunerea: ritm prea abrupt crește anxietatea și abandonul.','Evită etichetarea („ești controlor”) și interpretările prea rapide.','La TSA/ADHD nu trata automat controlul ca simplă compulsie sau intoleranță la incertitudine: verifică mai întâi funcția lui (predictibilitate, compensare executivă, reglare).'],
+g_e:'Dovezi (din sinteza literaturii)',g_es:['CBT țintită pe IU: efecte mari asupra IU în GAD (meta-analiză, 26 studii); avantaj post-tratament față de CBT generală.','Meta-analiză 2026: CBT-IU și modelele metacognitive depășesc modelul bazat pe evitarea worry pe termen scurt; diferențele dispar la follow-up.','MCT: meta-analiză 2025 (21 studii), superioară listei de așteptare și unor CBT, cu limitări metodologice.','ACT: meta-analiză 2024 (67 studii, peste 9.000 participanți), crește flexibilitatea psihologică.','Perfecționism: meta-analiză 15 RCT, efecte medii-mari. TOC: ERP este tratament de primă linie.','IU este factor transdiagnostic; scăderea ei în CBT transdiagnostică (inclusiv grup, 151 pacienți) se asociază cu rezultate mai bune.','Prelegere Freeston (ian. 2026): IU văzută și ca vulnerabilitate trans-situațională, de ex. în eco-distres; domeniu în dezvoltare.'],
+g_n:'Actualizează secțiunea de dovezi când apar sinteze noi.',
+n_inf:'Influență',d_inf:'Separă ce poate controla de ce poate doar influența și redirecționează energia.',i1:'Control sau influență',i1h:'Control: „trebuie să mă asigur că X se întâmplă”. Influență: „fac ce ține de mine, rezultatul nu îmi aparține complet”.',can:'Pot controla (comportamentul meu, ce spun, pregătirea, limitele)',cant:'Nu pot controla (reacțiile altora, ce cred ei, rezultatul final, imprevizibilul)',i2:'Redirecționare',waste:'Unde investesc energie încercând să controlez ceva necontrolabil?',choose:'Ce pot influența în schimb, concret?',
+hard:'Cât de greu e să nu controleze? (0-10)',impr:'Intensitatea impulsului (0-10)',sbq:'Comportamente de siguranță',sbl:{chk:'Verificare',rea:'Reasigurare',pla:'Planificare excesivă',avo:'Evitare',mon:'Monitorizare',ana:'Analiză repetată',cor:'Corectarea altora',ant:'Anticiparea scenariilor'},belq:'Credințe frecvente',bel:{b1:'Dacă nu controlez eu, merge prost',b2:'Trebuie să fiu pregătit pentru orice',b3:'Dacă greșesc, consecințele sunt catastrofale',b4:'Nu pot avea încredere în ceilalți',b5:'Trebuie să previn problemele înainte să apară',b6:'Dacă mă relaxez, pierd controlul'},
+e3h:'Nivel 1: nu verific un mesaj imediat, las o mică imperfecțiune, nu cer reasigurare. Nivel 2: deleg o sarcină și nu verific rezultatul. Nivel 3: intru într-o situație incertă fără să prevăd toate scenariile.',
+g_a:'Alianță și relația terapeutică',g_as:['Explică structura și metoda ședințelor: predictibilitatea reduce rezistența.','Oferă alegeri reale (agendă, ritm, tehnici).','Tratează controlul ca pe o competență care a servit cândva ceva.','Controlul apare și în sală (multe întrebări, negociere, „vreau să știu planul”): folosește-l în timp real: „Ce simți când nu știi?”'],
+g_s:'Scheme de explorat',g_ss:['Unrelenting Standards, Mistrust/Abuse, Vulnerability to Harm, Emotional Deprivation, Abandonment, uneori Insufficient Self-Control'],
+g_c:'Formularea de lucru',g_cs:['Controlul este un comportament de siguranță prin care persoana reduce disconfortul produs de incertitudine. Obiectiv: să poată alege când merită să controleze și când poate tolera că nu controlează (flexibilitate psihologică).'],
+n_nd:"TSA+ADHD",d_nd:"Adaptare pentru adulți cu TSA și/sau ADHD: ce funcție are controlul, ce păstrăm și cum dozăm predictibilitatea.",
+nd_note:"La persoane cu TSA și/sau ADHD, controlul poate avea altă funcție (predictibilitate, compensare executivă, reglare). Interpretează cu prudență și vezi fila TSA+ADHD.",
+nd_t:"Controlul la adultul cu TSA și/sau ADHD",
+nd_i:"Nu pornim de la ideea „nevoia de control = intoleranță la incertitudine”. Verificăm mai întâi ce funcție are controlul în contextul neurodivergenței și adaptăm intervenția individual, nu rigid după un protocol standard. Atenție la masking și compensare, mai ales la femeile adulte, care pot părea foarte organizate și „funcționale”.",
+nd_tools:"Instrumente",
+nd1:"Evaluare pe 4 niveluri",nd1d:"Predictibilitate (TSA), funcții executive (ADHD), reglare emoțională, apoi intoleranța la incertitudine.",
+nd2:"Funcția controlului",nd2d:"Pe situații: ce încearcă să controleze, de ce, dacă e necesar. Clasifică: util, compensator sau anxios.",
+nd3:"Doza de predictibilitate",nd3d:"Micro-experimente graduale (100% → 90% → 80% → 70%), nu „lasă totul la voia întâmplării”.",
+ndl1:"Nivelul 1 · Predictibilitate (TSA)",ndl1h:"Controlul poate fi o nevoie reală de predictibilitate: „Dacă știu exact ce urmează, pot funcționa.” Nu încercăm să o eliminăm. Ținta: predictibilitate necesară → flexibilitate suficientă.",
+ndp_q:"Ce trebuie să fie previzibil ca să poată funcționa?",ndp_dev:"Ce mici deviații de la plan tolerează deja și care o scot din funcțiune?",ndp_ch:"Cât de greu suportă schimbările neașteptate (0-10)",
+ndl2:"Nivelul 2 · Funcții executive (ADHD)",ndl2h:"„Dacă nu controlez eu totul, uit ceva / întârzii / devine haos.” Bifează ce este prezent. Dacă sunt prezente, controlul poate fi o strategie compensatorie, nu o simplă compulsie.",
+exo:{pro:"Procrastinare",tbl:"Time blindness",sta:"Dificultatea de a începe",uit:"Uitare",dez:"Dezorganizare",hyp:"Hiperfocus",tra:"Dificultatea tranzițiilor",ovl:"Supraîncărcare de sarcini"},
+ndl3:"Nivelul 3 · Controlul ca reglare emoțională",ndl3h:"incertitudine → supraîncărcare → anxietate → nevoie de control → reglare. Bifează ce este prezent. Aici lucrăm mai întâi pe reglare, nu pe expunere agresivă la incertitudine.",
+rgo:{sen:"Sensibilitate senzorială",emo:"Dificultăți de identificare/reglare emoțională",soc:"Oboseală după interacțiuni sociale",mas:"Masking",bur:"Burnout",chg:"Dificultăți cu schimbările neașteptate"},
+ndlm:"Masking și compensare",ndlmh:"Persoana poate părea organizată și „funcțională”, dar controlul este ceea ce îi permite să funcționeze. Dacă îi spui „Trebuie să renunți la control”, poate auzi „Trebuie să renunți la mecanismele care te țin funcțională”.",mkq:"Ce îi permite controlul să mențină? Ce ar pierde dacă l-ar abandona?",
+ndl4:"Nivelul 4 · Intoleranța la incertitudine",ndl4h:"Abia după nivelurile 1-3. Bifează ce mai rămâne.",
+iuo:{k1:"„Trebuie să știu.”",k2:"„Nu suport să nu știu.”",k3:"„Trebuie să mă asigur că nu se întâmplă X.”"},
+ex_hi:"Mai multe dificultăți executive: nu trata comportamentul de control drept simplă compulsie. Caută o strategie ADHD mai eficientă (sistem extern, verificare programată).",
+ex_lo:"Verifică dacă controlul are rol compensator pentru funcțiile executive.",
+rg_hi:"Reglarea emoțională primează: lucrează mai întâi pe reglare, nu pe expunere agresivă la incertitudine.",
+mk_w:"Masking bifat: evită formulări de tip „renunță la control”; explorează ce funcționare susține controlul.",
+iu_go:"Rămân gânduri de tip „trebuie să știu”: CBT pentru intoleranța la incertitudine + experimente comportamentale.",
+iu_no:"Nimic bifat: lucrul direct pe intoleranța la incertitudine nu pare prioritar acum.",
+nd_ord_t:"Ordine de lucru",nd_ord:"Adaptări TSA + strategii ADHD → reglare emoțională → intoleranță la incertitudine → reducerea comportamentelor de control inutile → experimente graduale de flexibilitate.",
+nd2a:"Situația",q_sit:"Situația",q_ctl:"Ce încerc să controlez?",q_why:"De ce? (TSA, ADHD, anxietate, perfecționism...)",
+nd2b:"Necesitatea controlului",q_need:"Control necesar?",o_need:["Da","Parțial","Nu"],q_if:"Ce se întâmplă dacă nu controlez?",q_real:"Controlul acesta rezolvă o problemă reală sau reduce anxietatea pentru moment?",o_real:["Problemă reală","Anxietate pentru moment","Ambele"],
+nd2c:"Tipul de control",nd2ch:"Alege categoria care se potrivește cel mai bine.",q_cat:"Categorie",o_cat:["A. Control util","B. Control compensator","C. Control anxios"],
+cat_act:["A. Nu îl eliminăm. Exemplu: „îmi pun alarma pentru că am ADHD”.","B. Căutăm o strategie ADHD mai eficientă: un singur sistem extern de organizare → verificare programată → stop.","C. Response prevention / reducerea reasigurării."],cat_t:"Direcția pentru această situație",
+nd3a:"Planul",nd3ah:"Scopul nu e „să devină spontană”, ci să poată funcționa și când predictibilitatea nu este 100%.",d_dom:"Situația / domeniul planificat acum",d_lvl:"Nivel țintă de predictibilitate",o_lvl:["90%","80%","70%"],d_step:"Micro-experiment",
+o_step:["Las 10% din zi neplanificată","Nu cer explicația imediat când apare o schimbare","Las altă persoană să decidă cum se face X","Tolerez faptul că nu știu încă ce se va întâmpla"],
+nd3b:"Predicția",d_pred:"Ce prezic că se va întâmpla?",nd3c:"După experiment",d_hap:"Ce s-a întâmplat de fapt",d_learn:"Am funcționat și fără predictibilitate completă? Ce am învățat?",
+nd_lvh:"Cele 4 niveluri",
+nd_lv:[["1 · Nevoie reală de predictibilitate (TSA)","Exemplu: „Dacă știu exact ce urmează, pot funcționa.” Nu încercăm să eliminăm predictibilitatea, ar fi contraproductiv. Ținta: predictibilitate necesară → flexibilitate suficientă, adică să poată tolera mici deviații de la plan fără să intre în anxietate majoră."],
+["2 · Control ca strategie executivă (ADHD)","Exemplu: „Dacă nu controlez eu totul, uit ceva / pierd ceva / întârzii / nu termin / devine haos.” Verifică: procrastinare, time blindness, dificultatea de a începe, uitare, dezorganizare, hiperfocus, dificultatea tranzițiilor, supraîncărcare de sarcini. Dacă sunt prezente, nu trata controlul ca pe o simplă compulsie. „Îmi fac lista de 4 ori” poate fi anxietate, dar și o strategie ADHD imperfectă pentru a nu uita."],
+["3 · Controlul ca reglare emoțională","Lanț: incertitudine → supraîncărcare → anxietate → nevoie de control → reglare. Mai ales cu sensibilitate senzorială, dificultăți de identificare/reglare emoțională, oboseală după interacțiuni sociale, masking, burnout sau dificultăți cu schimbările neașteptate. Lucrăm mai întâi pe reglare, nu pe expunere agresivă la incertitudine."],
+["4 · Intoleranța la incertitudine, abia apoi","Dacă după primele trei niveluri rămân „Trebuie să știu.”, „Nu suport să nu știu.”, „Trebuie să mă asigur că nu se întâmplă X.”, direcția cea mai bună este CBT + intoleranța la incertitudine + experimente comportamentale."],
+["Masking și compensare","Persoana poate părea extrem de organizată, controlată și „funcțională”, dar controlul este ceea ce îi permite să mențină funcționarea. Dacă terapeutul spune „Trebuie să renunți la control”, ea poate auzi „Trebuie să renunți la mecanismele care te țin funcțională”."]],
+nd_cath:"Funcția controlului: A / B / C",
+nd_cats:[["A. Control util","„Îmi pun alarma pentru că am ADHD.”","Nu îl eliminăm."],["B. Control compensator","„Îmi verific agenda de 5 ori pentru că mi-e teamă să nu uit.”","Căutăm o strategie ADHD mai eficientă: un singur sistem extern de organizare → verificare programată → stop."],["C. Control anxios","„Îi cer partenerului să-mi confirme de 6 ori că nu este supărat.”","Response prevention / reducerea reasigurării."]],
+nd_cq:"Întrebarea centrală: „Controlul acesta rezolvă o problemă reală sau îți reduce anxietatea pentru moment?”",
+nd_exh:"Exemplu de tabel",nd_exc:["Situație","Ce încerc să controlez?","De ce?","Control necesar?","Ce se întâmplă dacă nu controlez?"],
+nd_exr:[["Planul zilei se schimbă","programul","anxietate","parțial","disconfort"],["Partenerul nu răspunde","reacția lui","teamă","nu","incertitudine"],["Am multe taskuri","organizarea","ADHD","da","uit lucruri"],["Cineva face altfel decât mine","rezultatul","perfecționism","nu","iritare"]],
+nd_dh:"Doza optimă de predictibilitate",nd_dp:"Scopul nu e „să devină spontană”, ci să poată funcționa și când predictibilitatea nu este 100%. Scară: 100% → 90% → 80% → 70%, nu 100% → „lasă totul la voia întâmplării”. Micro-experimente, în ordine:",
+nd_fh:"Formularea de lucru (TSA + ADHD)",nd_fs:["TSA → nevoie de predictibilitate, sensibilitate la schimbare","+ ADHD → dificultăți executive, nevoie de externalizare/structură","+ anxietate → intoleranță la incertitudine, comportamente de siguranță","+ eventual perfecționism → standarde ridicate, controlul rezultatului","Mai potrivit decât un protocol generic de „renunțare la control”."],
+nd_wh:"Atenție (TSA + ADHD)",nd_ws:["Nu spune „renunță la control”: poate fi auzit ca „renunță la mecanismele care te țin funcțională”.","Controlul util (de ex. alarma pentru ADHD) nu se elimină.","Nu trata controlul ca simplă compulsie înainte să verifici funcția lui executivă.","Reglare înainte de expunere: nu expune agresiv la incertitudine.","Scopul nu e spontaneitatea, ci funcționarea și când predictibilitatea nu este 100%.","Utilitatea adaptărilor variază mult de la o persoană la alta: întreabă ce o ajută."],
+nd_eh:"Dovezi (din sinteza furnizată)",nd_es:["La adulții autiști, preferința pentru predictibilitate și dificultatea cu incertitudinea sunt frecvente și asociate cu anxietatea; există suport pentru legătura dintre IU și anxietate în autism.","Literatura despre psihoterapia la adulții autiști susține adaptarea individualizată, nu aplicarea rigidă a unui protocol standard.","CBT adaptată ADHD are suport pentru reducerea simptomelor ADHD și a anxietății/depresiei, inclusiv în meta-analize recente.","La adulții autiști există dificultăți relevante de reactivitate și reglare emoțională, dar literatura este încă heterogenă.","Psihoterapia poate reduce IU în populații clinice; efectele sunt mai puțin clare față de o altă psihoterapie activă.","Adaptările neurodiversity-affirming sunt printre cele mai apreciate de adulții autiști; un studiu recent (130 de adulți autiști, majoritatea femei) arată variații individuale mari în utilitatea adaptărilor."],
+nd_src:"Dovezile sunt preluate din sinteza furnizată; verifică sursele primare înainte de a le cita. Chestionarul și instrumentele nu sunt validate psihometric.",
+},en:{
+n_home:'Home',n_prof:'Profile',n_cyc:'Cycle',n_exp:'Experiment',n_gd:'Guide',n_hs:'History',
+h_title:'The need for control',h_sub:'Control is usually a safety strategy, not the problem itself. Here we understand it, measure it and test it through experience.',
+loop:['Uncertainty','Anxiety','Control','Temporary relief','Greater need for control'],
+h_go:'Start',h_priv:'Data stays in this browser only (localStorage). Nothing is sent anywhere. Use a code instead of a full name.',
+d_prof:'18 items, 6 areas. Shows what the person tries to control and which therapeutic direction fits.',
+d_cyc:'Build the cycle together: trigger → interpretation → urge → behavior → relief → cost.',
+d_exp:'The "20% less control" experiment: plan, predict, try, record what happened.',
+start:'Start',next:'Continue',back:'Back',save:'Save',print:'Print / PDF',saved:'Saved to History.',
+client:'Client code / label (optional)',step:'Step',of:'of',
+dim_iu:'Intolerance of uncertainty',dim_th:'Thought control',dim_em:'Emotion control',dim_pf:'Perfectionism',dim_ip:'Interpersonal control',dim_ck:'Checking and reassurance',
+sc:['Never','Rarely','Sometimes','Often','Always'],lvl:['low','moderate','high'],
+f_iu:'CBT for intolerance of uncertainty + behavioral experiments',f_th:'Metacognitive therapy (detached mindfulness, reducing worry/rumination)',f_em:'ACT (acceptance, defusion, values, committed action)',f_pf:'CBT for perfectionism (imperfection experiments)',f_ip:'Schema therapy + building inner safety and tolerance of vulnerability',f_ck:'Assess for OCD; if confirmed, CBT with ERP',
+disc:'Indicative questionnaire, not psychometrically validated, made to support clinical discussion. Not a diagnostic tool.',
+top:'Suggested directions',
+c1:'What does the person try to control?',c1h:'Select all that apply.',
+ch:{env:'Environment, things',oth:'Other people',fut:'The future',tho:'Thoughts',emo:'Emotions / body',per:'Performance',dan:'Possible dangers'},
+c2:'The cycle',trig:'Triggering situation',interp:'What do they fear will happen?',anx1:'Anxiety before (0-10)',imp:'The urge (what they feel they must do)',beh:'What they actually do (control behavior)',
+c3:'Effects',rel:'What happens right after?',anx2:'Anxiety after (0-10)',cost:'Long-term costs',prot:'What do they think control protects them from? (anxiety, shame, abandonment, mistakes, chaos)',
+c4:'Summary',
+e1:'The situation',sit:'Low-risk situation',want:'What I would like to control',
+e2:'The prediction',pred:'What do I predict will happen?',
+e3:'The plan',plan:'What will I do differently? (about 20% less control)',
+e4:'After the experiment',did:'What I actually did',hap:'What actually happened',learn:'What I learned (can I tolerate not knowing?)',
+sec:'Anxiety after',
+hs_t:'Saved history',hs_e:'Nothing saved yet. Complete a profile, cycle or experiment and press Save.',del:'Delete',exp:'Export JSON',clr:'Delete all',conf:'Sure?',
+ty:{inf:'Control vs influence',prof:'Control profile',cyc:'Control cycle',exp:'Experiment',nd1:'ASD+ADHD · 4 levels',nd2:'ASD+ADHD · Function of control',nd3:'ASD+ADHD · Dose of predictability'},
+g_t:'Clinical guide',g_i:'Orientation by presentation',
+g_rows:[['Anxiety + "I must know"','CBT for intolerance of uncertainty'],['Worry/rumination, thought control','Metacognitive therapy'],['Emotional avoidance, rigidity','ACT'],['Perfectionism','CBT for perfectionism'],['Checking, compulsions, 100% certainty','CBT with ERP'],['Interpersonal control, long-standing pattern','Schema therapy + CBT'],['Control after traumatic experiences','Trauma-focused treatment, not just exposure to lack of control'],['No clear psychopathology','CBT + IU + behavioral experiments'],['ASD + ADHD (adult)','ASD adaptations + ADHD strategies → regulation → IU → graded experiments (see the ASD+ADHD tab)']],
+g_p:'8-10 session protocol',g_ps:['1-2 Assessment and conceptualization (the cycle)','3 Intolerance of uncertainty: the "I must know" rules','4 List of safety behaviors','5-7 Graded experiments / exposures (hierarchy)','8 MCT or ACT, depending on mechanism','9 Values and alternative behavior','10 Relapse prevention: signals and plan'],
+g_q:'Key questions',g_qs:['What would happen if you could not control it?','What is the worst thing that could happen?','What has control protected you from over time?','What do you do when the urge to control appears?','What are you trying to get through controlling the other person?','What do you feel you would lose if you let things unfold on their own?'],
+g_w:'Cautions',g_ws:['The goal is not "give up control" but flexible choice: when control is worth it and when uncertainty can be tolerated.','Do not promise "nothing bad will happen"; the target is tolerance of "I don\'t know".','Avoid power struggles and becoming a "source of control" (rigid homework).','Dose exposure: too steep a pace raises anxiety and dropout.','Avoid labeling ("you are controlling") and premature interpretations.','In ASD/ADHD do not automatically treat control as a simple compulsion or intolerance of uncertainty: check its function first (predictability, executive compensation, regulation).'],
+g_e:'Evidence (from the literature review)',g_es:['IU-targeted CBT: large effects on IU in GAD (meta-analysis, 26 studies); post-treatment advantage over general CBT.','2026 meta-analysis: IU-based CBT and metacognitive models beat the worry-avoidance model short-term; differences vanish at follow-up.','MCT: 2025 meta-analysis (21 studies), better than waitlist and some CBT, with methodological limits.','ACT: 2024 meta-analysis (67 studies, over 9,000 participants), increases psychological flexibility.','Perfectionism: meta-analysis of 15 RCTs, medium-large effects. OCD: ERP is first-line.','IU is a transdiagnostic factor; its reduction in transdiagnostic CBT (including a 151-patient group study) goes with better outcomes.','Freeston talk (Jan 2026): IU also seen as a trans-situational vulnerability, e.g. in eco-distress; a developing area.'],
+g_n:'Update the evidence section as new syntheses appear.',
+n_inf:'Influence',d_inf:'Separate what can be controlled from what can only be influenced and redirect energy.',i1:'Control or influence',i1h:'Control: "I must make sure X happens". Influence: "I do my part, the outcome is not entirely mine".',can:'I can control (my behavior, what I say, my preparation, my limits)',cant:'I cannot control (others reactions, what they think, the final outcome, the unexpected)',i2:'Redirecting',waste:'Where do I spend energy trying to control something uncontrollable?',choose:'What can I influence instead, concretely?',
+hard:'How hard is it not to control? (0-10)',impr:'Intensity of the urge (0-10)',sbq:'Safety behaviors',sbl:{chk:'Checking',rea:'Reassurance',pla:'Over-planning',avo:'Avoidance',mon:'Monitoring',ana:'Repeated analysis',cor:'Correcting others',ant:'Anticipating scenarios'},belq:'Common beliefs',bel:{b1:'If I do not control it, it goes wrong',b2:'I must be prepared for anything',b3:'If I err, consequences are catastrophic',b4:'I cannot trust others',b5:'I must prevent problems before they appear',b6:'If I relax, I lose control'},
+e3h:'Level 1: do not check a message right away, leave a small imperfection, do not ask for reassurance. Level 2: delegate a task and do not check the result. Level 3: enter an uncertain situation without predicting every scenario.',
+g_a:'Alliance and therapeutic relationship',g_as:['Explain session structure and method: predictability reduces resistance.','Offer real choices (agenda, pace, techniques).','Treat control as a skill that once served a purpose.','Control shows up in the room (many questions, negotiating, "I want to know the plan"): use it in real time: "What do you feel when you do not know?"'],
+g_s:'Schemas to explore',g_ss:['Unrelenting Standards, Mistrust/Abuse, Vulnerability to Harm, Emotional Deprivation, Abandonment, sometimes Insufficient Self-Control'],
+g_c:'Working formulation',g_cs:['Control is a safety behavior by which the person reduces the discomfort caused by uncertainty. Goal: to be able to choose when control is worth it and when they can tolerate not controlling (psychological flexibility).'],
+n_nd:"ASD+ADHD",d_nd:"Adaptation for adults with ASD and/or ADHD: what function control serves, what to keep, and how to dose predictability.",
+nd_note:"In people with ASD and/or ADHD, control may serve another function (predictability, executive compensation, regulation). Interpret with caution and see the ASD+ADHD tab.",
+nd_t:"Control in adults with ASD and/or ADHD",
+nd_i:"We do not start from “need for control = intolerance of uncertainty”. First we check what function control serves in the context of neurodivergence, and adapt the intervention individually rather than applying a standard protocol rigidly. Watch for masking and compensation, especially in adult women, who may look very organized and “functional”.",
+nd_tools:"Tools",
+nd1:"4-level assessment",nd1d:"Predictability (ASD), executive functions (ADHD), emotional regulation, then intolerance of uncertainty.",
+nd2:"Function of control",nd2d:"Situation by situation: what they try to control, why, whether it is needed. Classifies as useful, compensatory or anxious.",
+nd3:"Dose of predictability",nd3d:"Graded micro-experiments (100% → 90% → 80% → 70%), not “leave everything to chance”.",
+ndl1:"Level 1 · Predictability (ASD)",ndl1h:"Control can be a real need for predictability: “If I know exactly what comes next, I can function.” We do not try to remove it. Target: necessary predictability → sufficient flexibility.",
+ndp_q:"What needs to be predictable for them to function?",ndp_dev:"Which small deviations from the plan can they already tolerate, and which throw them off?",ndp_ch:"How hard are unexpected changes (0-10)",
+ndl2:"Level 2 · Executive functions (ADHD)",ndl2h:"“If I do not control everything, I forget something / run late / it turns to chaos.” Tick what is present. If present, control may be a compensatory strategy, not a simple compulsion.",
+exo:{pro:"Procrastination",tbl:"Time blindness",sta:"Difficulty starting",uit:"Forgetfulness",dez:"Disorganization",hyp:"Hyperfocus",tra:"Difficulty with transitions",ovl:"Task overload"},
+ndl3:"Level 3 · Control as emotional regulation",ndl3h:"uncertainty → overload → anxiety → need for control → regulation. Tick what is present. Here we work on regulation first, not on aggressive exposure to uncertainty.",
+rgo:{sen:"Sensory sensitivity",emo:"Difficulty identifying/regulating emotions",soc:"Fatigue after social interaction",mas:"Masking",bur:"Burnout",chg:"Difficulty with unexpected changes"},
+ndlm:"Masking and compensation",ndlmh:"The person may look organized and “functional”, but control is what allows them to function. If you say “You have to give up control”, they may hear “You have to give up the mechanisms that keep you functioning”.",mkq:"What does control allow them to maintain? What would they lose if they gave it up?",
+ndl4:"Level 4 · Intolerance of uncertainty",ndl4h:"Only after levels 1-3. Tick what remains.",
+iuo:{k1:"“I must know.”",k2:"“I can't stand not knowing.”",k3:"“I must make sure X doesn't happen.”"},
+ex_hi:"Several executive difficulties: do not treat the control behavior as a simple compulsion. Look for a more effective ADHD strategy (external system, scheduled checking).",
+ex_lo:"Check whether control serves a compensatory role for executive functions.",
+rg_hi:"Emotional regulation comes first: work on regulation before aggressive exposure to uncertainty.",
+mk_w:"Masking ticked: avoid “give up control” phrasing; explore what functioning the control supports.",
+iu_go:"“I must know” thoughts remain: CBT for intolerance of uncertainty + behavioral experiments.",
+iu_no:"Nothing ticked: direct work on intolerance of uncertainty does not look like a priority now.",
+nd_ord_t:"Working order",nd_ord:"ASD adaptations + ADHD strategies → emotional regulation → intolerance of uncertainty → reducing unnecessary control behaviors → graded flexibility experiments.",
+nd2a:"The situation",q_sit:"The situation",q_ctl:"What am I trying to control?",q_why:"Why? (ASD, ADHD, anxiety, perfectionism...)",
+nd2b:"Is control needed",q_need:"Control needed?",o_need:["Yes","Partly","No"],q_if:"What happens if I do not control?",q_real:"Does this control solve a real problem or reduce anxiety for the moment?",o_real:["Real problem","Anxiety, for the moment","Both"],
+nd2c:"Type of control",nd2ch:"Choose the category that fits best.",q_cat:"Category",o_cat:["A. Useful control","B. Compensatory control","C. Anxious control"],
+cat_act:["A. We do not remove it. Example: “I set an alarm because I have ADHD”.","B. Look for a more effective ADHD strategy: one external organizing system → scheduled check → stop.","C. Response prevention / reducing reassurance."],cat_t:"Direction for this situation",
+nd3a:"The plan",nd3ah:"The goal is not “becoming spontaneous” but being able to function when predictability is not 100%.",d_dom:"Situation / area planned right now",d_lvl:"Target level of predictability",o_lvl:["90%","80%","70%"],d_step:"Micro-experiment",
+o_step:["Leave 10% of the day unplanned","Do not ask for an explanation right away when something changes","Let someone else decide how X is done","Tolerate not yet knowing what will happen"],
+nd3b:"The prediction",d_pred:"What do I predict will happen?",nd3c:"After the experiment",d_hap:"What actually happened",d_learn:"Did I function without full predictability? What did I learn?",
+nd_lvh:"The 4 levels",
+nd_lv:[["1 · Real need for predictability (ASD)","Example: “If I know exactly what comes next, I can function.” We do not try to remove predictability; that would backfire. Target: necessary predictability → sufficient flexibility, meaning being able to tolerate small deviations from the plan without major anxiety."],
+["2 · Control as an executive strategy (ADHD)","Example: “If I do not control everything, I forget something / lose something / run late / do not finish / it turns to chaos.” Check: procrastination, time blindness, difficulty starting, forgetfulness, disorganization, hyperfocus, difficulty with transitions, task overload. If present, do not treat control as a simple compulsion. “I make my list 4 times” may be anxiety, but also an imperfect ADHD strategy for not forgetting."],
+["3 · Control as emotional regulation","Chain: uncertainty → overload → anxiety → need for control → regulation. Especially with sensory sensitivity, difficulty identifying/regulating emotions, fatigue after social interaction, masking, burnout or difficulty with unexpected changes. We work on regulation first, not on aggressive exposure to uncertainty."],
+["4 · Intolerance of uncertainty, only then","If after the first three levels “I must know.”, “I can't stand not knowing.”, “I must make sure X doesn't happen.” remain, the best direction is CBT + intolerance of uncertainty + behavioral experiments."],
+["Masking and compensation","The person may look extremely organized, controlled and “functional”, yet control is what lets them keep functioning. If the therapist says “You have to give up control”, they may hear “You have to give up the mechanisms that keep you functioning”."]],
+nd_cath:"Function of control: A / B / C",
+nd_cats:[["A. Useful control","“I set an alarm because I have ADHD.”","We do not remove it."],["B. Compensatory control","“I check my planner 5 times because I fear forgetting.”","Look for a more effective ADHD strategy: one external organizing system → scheduled check → stop."],["C. Anxious control","“I ask my partner to confirm 6 times that they are not upset.”","Response prevention / reducing reassurance."]],
+nd_cq:"The central question: “Does this control solve a real problem, or does it reduce your anxiety for the moment?”",
+nd_exh:"Example table",nd_exc:["Situation","What am I trying to control?","Why?","Control needed?","What happens if I do not control?"],
+nd_exr:[["The day's plan changes","the schedule","anxiety","partly","discomfort"],["Partner does not reply","their reaction","fear","no","uncertainty"],["I have many tasks","the organization","ADHD","yes","I forget things"],["Someone does it differently than me","the result","perfectionism","no","irritation"]],
+nd_dh:"Optimal dose of predictability",nd_dp:"The goal is not “becoming spontaneous” but being able to function when predictability is not 100%. Scale: 100% → 90% → 80% → 70%, not 100% → “leave everything to chance”. Micro-experiments, in order:",
+nd_fh:"Working formulation (ASD + ADHD)",nd_fs:["ASD → need for predictability, sensitivity to change","+ ADHD → executive difficulties, need for externalization/structure","+ anxiety → intolerance of uncertainty, safety behaviors","+ possibly perfectionism → high standards, control of outcome","More suitable than a generic “give up control” protocol."],
+nd_wh:"Cautions (ASD + ADHD)",nd_ws:["Do not say “give up control”: it may be heard as “give up the mechanisms that keep you functioning”.","Useful control (e.g. an ADHD alarm) is not removed.","Do not treat control as a simple compulsion before checking its executive function.","Regulation before exposure: do not expose aggressively to uncertainty.","The goal is not spontaneity but functioning when predictability is not 100%.","How useful adaptations are varies a lot between people: ask what helps them."],
+nd_eh:"Evidence (from the synthesis provided)",nd_es:["In autistic adults, preference for predictability and difficulty with uncertainty are common and linked to anxiety; there is support for the link between IU and anxiety in autism.","The literature on psychotherapy with autistic adults supports individualized adaptation rather than rigid application of a standard protocol.","ADHD-adapted CBT has support for reducing ADHD symptoms and anxiety/depression, including in recent meta-analyses.","Autistic adults show relevant difficulties in emotional reactivity and regulation, though the literature is still heterogeneous.","Psychotherapy can reduce IU in clinical populations; effects are less clear against another active psychotherapy.","Neurodiversity-affirming adaptations are among those most valued by autistic adults; a recent study (130 autistic adults, mostly women) found large individual variation in how useful different adaptations were."],
+nd_src:"Evidence is taken from the synthesis provided; check primary sources before citing. The questionnaire and tools are not psychometrically validated.",
+}};
+const ITEMS=[['iu','Nu suport să nu știu ce urmează.','I can\'t stand not knowing what comes next.'],['iu','Trebuie să fiu sigur înainte să decid.','I must be certain before I decide.'],['iu','Incertitudinea mă face să planific excesiv.','Uncertainty makes me over-plan.'],
+['th','Încerc să opresc anumite gânduri.','I try to stop certain thoughts.'],['th','Cred că dacă mă îngrijorez destul, previn răul.','I believe that worrying enough prevents bad things.'],['th','Analizez o situație iar și iar până mă liniștesc.','I go over a situation again and again until I calm down.'],
+['em','Trebuie să scap de anxietate ca să pot continua.','I must get rid of anxiety before I can carry on.'],['em','Mă lupt cu senzațiile neplăcute din corp.','I fight unpleasant body sensations.'],['em','Evit situații ca să nu simt disconfort.','I avoid situations so I don\'t feel discomfort.'],
+['pf','Dacă nu e perfect, e un eșec.','If it isn\'t perfect, it\'s a failure.'],['pf','Greșelile mele mă marchează mult timp.','My mistakes stay with me for a long time.'],['pf','Îmi fixez standarde pe care alții nu le-ar atinge.','I set standards others wouldn\'t meet.'],
+['ip','Dacă nu fac eu, nimeni nu face bine.','If I don\'t do it, no one does it right.'],['ip','Mă tem să am încredere în ceilalți.','I fear trusting others.'],['ip','Corectez sau dirijez oamenii din jur.','I correct or direct the people around me.'],
+['ck','Verific lucrurile de mai multe ori.','I check things several times.'],['ck','Am nevoie de reasigurări de la alții.','I need reassurance from others.'],['ck','Fac lucrurile într-un anumit fel, altfel simt că ceva e greșit.','I do things a certain way, otherwise it feels wrong.']];
+const DIMS=['iu','th','em','pf','ip','ck'],CHIP={env:'iu',oth:'ip',fut:'iu',tho:'th',emo:'em',per:'pf',dan:'ck'};
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const st={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const S={lang:st.g('ctrl.lang')||'ro',theme:st.g('ctrl.theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'),tab:'home'};
+let W=null,msg='';
+const t=k=>L[S.lang][k],db=()=>{try{return JSON.parse(st.g('ctrl.v1')||'[]')}catch(e){return[]}};
+const sd=a=>st.s('ctrl.v1',JSON.stringify(a));
+const steps=id=>{const R=(k,type,raw)=>({k,type,l:k});
+ if(id=='nd1')return[{t:'ndl1',h:'ndl1h',f:[R('ndp_q','a'),R('ndp_dev','a'),R('ndp_ch','r')]},{t:'ndl2',h:'ndl2h',f:[{k:'ex',type:'chips',o:'exo'}]},{t:'ndl3',h:'ndl3h',f:[{k:'rg',type:'chips',o:'rgo'}]},{t:'ndlm',h:'ndlmh',f:[R('mkq','a')]},{t:'ndl4',h:'ndl4h',f:[{k:'iu4',type:'chips',o:'iuo'}]},{sum:1}];
+ if(id=='nd2')return[{t:'nd2a',f:[R('q_sit','a'),R('q_ctl','a'),R('q_why','a')]},{t:'nd2b',f:[{k:'q_need',type:'pick',l:'q_need',o:'o_need'},R('q_if','a'),{k:'q_real',type:'pick',l:'q_real',o:'o_real'}]},{t:'nd2c',h:'nd2ch',f:[{k:'q_cat',type:'pick',l:'q_cat',o:'o_cat'}]},{sum:1}];
+ if(id=='nd3')return[{t:'nd3a',h:'nd3ah',f:[R('d_dom','a'),{k:'d_lvl',type:'pick',l:'d_lvl',o:'o_lvl'},{k:'d_step',type:'pick',l:'d_step',o:'o_step'}]},{t:'nd3b',f:[R('d_pred','a'),R('anx1','r')]},{t:'nd3c',f:[R('d_hap','a'),R('anx2','r'),R('d_learn','a')]},{sum:1}];
+ if(id=='prof')return DIMS.map(d=>({t:'dim_'+d,f:ITEMS.filter(x=>x[0]==d).map((x,j)=>({k:d+j,type:'sc',l:x[S.lang=='ro'?1:2],raw:1}))})).concat([{sum:1}]);
+ if(id=='cyc')return[{t:'c1',h:'c1h',f:[{k:'ctl',type:'chips'}]},{t:'c2',f:[R('trig','a'),R('interp','a'),R('hard','r'),R('anx1','r'),R('imp','a'),R('impr','r'),R('beh','a'),{k:'sb',type:'chips',o:'sbl',l:t('sbq')}]},{t:'c3',f:[R('rel','a'),R('anx2','r'),R('cost','a'),R('prot','a'),{k:'bl',type:'chips',o:'bel',l:t('belq')}]},{sum:1}];
+ if(id=='inf')return[{t:'i1',h:'i1h',f:[R('can','a'),R('cant','a')]},{t:'i2',f:[R('waste','a'),R('choose','a')]},{sum:1}];
+ return[{t:'e1',f:[R('sit','a'),R('want','a')]},{t:'e2',f:[R('pred','a'),R('anx1','r')]},{t:'e3',h:'e3h',f:[R('plan','a')]},{t:'e4',f:[R('did','a'),R('hap','a'),R('anx2','r'),R('learn','a')]},{sum:1}]};
+const fld=f=>{const v=W.d[f.k],l=f.raw?f.l:t(f.l);
+ if(f.type=='r'&&v===undefined)W.d[f.k]=0;
+ if(f.type=='sc')return`<label>${esc(l)}</label><div class="sc">${t('sc').map((x,i)=>`<button data-a="sc" data-k="${f.k}" data-v="${i}" class="${v===i?'on':''}">${x}</button>`).join('')}</div>`;
+ if(f.type=='pick')return`<label>${esc(l)}</label><div class="chips">${t(f.o).map((x,i)=>`<button data-a="sc" data-k="${f.k}" data-v="${i}" class="${v===i?'on':''}">${esc(x)}</button>`).join('')}</div>`;
+ if(f.type=='chips')return`${f.l?`<label>${esc(f.l)}</label>`:''}<div class="chips">${Object.entries(t(f.o||'ch')).map(([k,x])=>`<button data-a="chip" data-k="${f.k}" data-v="${k}" class="${(v||[]).includes(k)?'on':''}">${x}</button>`).join('')}</div>`;
+ if(f.type=='r')return`<label>${esc(l)}: <span id="o_${f.k}">${v??0}</span></label><input type="range" min="0" max="10" data-k="${f.k}" value="${v??0}">`;
+ return`<label>${esc(l)}</label><textarea data-k="${f.k}">${esc(v||'')}</textarea>`};
+const lv=n=>n<4?0:n<8?1:2;
+const score=d=>Object.fromEntries(DIMS.map(x=>[x,[0,1,2].reduce((a,j)=>a+(d[x+j]||0),0)]));
+const ndSum=(id,d)=>{let h='';
+ const sec=(ti,b)=>b?`<h3>${t(ti)}</h3>${b}`:'',li=a=>a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'',tx=k=>d[k]?`<p><b>${t(k)}</b><br>${esc(d[k])}</p>`:'',pk=(k,o)=>d[k]===undefined?'':`<p><b>${t(k)}</b>: ${esc(t(o)[d[k]])}</p>`,w=k=>`<p class="warn">${t(k)}</p>`;
+ if(id=='nd1'){const ex=d.ex||[],rg=d.rg||[],iu=d.iu4||[];
+  h=sec('ndl1',tx('ndp_q')+tx('ndp_dev')+(d.ndp_ch!==undefined?`<p><b>${t('ndp_ch')}</b>: ${d.ndp_ch}/10</p>`:''))
+  +sec('ndl2',li(ex.map(x=>t('exo')[x]))+(ex.length>=3?w('ex_hi'):ex.length?w('ex_lo'):''))
+  +sec('ndl3',li(rg.map(x=>t('rgo')[x]))+(rg.length>=3?w('rg_hi'):''))
+  +((rg.includes('mas')||d.mkq)?sec('ndlm',tx('mkq')+(rg.includes('mas')?w('mk_w'):'')):'')
+  +sec('ndl4',li(iu.map(x=>t('iuo')[x]))+w(iu.length?'iu_go':'iu_no'))
+  +`<h3>${t('nd_ord_t')}</h3><p>${t('nd_ord')}</p>`}
+ else if(id=='nd2'){h=tx('q_sit')+tx('q_ctl')+tx('q_why')+pk('q_need','o_need')+tx('q_if')+pk('q_real','o_real')+pk('q_cat','o_cat');
+  if(d.q_cat!==undefined)h+=`<h3>${t('cat_t')}</h3><p>${t('cat_act')[d.q_cat]}</p>`}
+ else{h=tx('d_dom')+pk('d_lvl','o_lvl')+pk('d_step','o_step')+tx('d_pred')+tx('d_hap')+tx('d_learn');
+  if(d.anx1!==undefined&&d.anx2!==undefined)h+=`<p><b>${d.anx1} → ${d.anx2}</b></p>`}
+ return h};
+const hub=()=>`<h1>${t('nd_t')}</h1><p>${t('nd_i')}</p>
+<h2>${t('nd_tools')}</h2><div class="go">${['nd1','nd2','nd3'].map(k=>`<button data-a="sn" data-v="${k}"><strong>${t(k)}</strong><span class="mut">${t(k+'d')}</span></button>`).join('')}</div>
+<div class="card" style="margin-top:14px"><h3>${t('nd_lvh')}</h3>${t('nd_lv').map(x=>`<details><summary>${x[0]}</summary><p>${x[1]}</p></details>`).join('')}</div>
+<div class="card"><h3>${t('nd_cath')}</h3><table>${t('nd_cats').map(x=>`<tr><td><b>${x[0]}</b><br><span class="mut">${x[1]}</span></td><td>${x[2]}</td></tr>`).join('')}</table><p class="warn" style="margin-top:12px">${t('nd_cq')}</p></div>
+<div class="card"><h3>${t('nd_exh')}</h3><div class="tw"><table><tr>${t('nd_exc').map(x=>`<th>${x}</th>`).join('')}</tr>${t('nd_exr').map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div></div>
+<div class="card"><h3>${t('nd_dh')}</h3><p>${t('nd_dp')}</p><ol>${t('o_step').map(x=>`<li>${x}</li>`).join('')}</ol></div>
+${[['nd_fh','nd_fs'],['nd_wh','nd_ws'],['nd_eh','nd_es']].map(([a,b])=>`<div class="card"><h3>${t(a)}</h3><ul>${t(b).map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}
+<p class="mut">${t('nd_src')}</p>`;
+const sumH=(id,d)=>{let h='';
+ if(id.startsWith('nd'))h=ndSum(id,d);
+ else if(id=='prof'){const s=score(d),top=DIMS.filter(x=>s[x]>=4).sort((a,b)=>s[b]-s[a]).slice(0,2);
+  h=DIMS.map(x=>`<div style="margin:0 0 12px"><div style="display:flex;justify-content:space-between"><span>${t('dim_'+x)}</span><b>${s[x]}/12 · ${t('lvl')[lv(s[x])]}</b></div><div class="m ${s[x]>=8?'hi':''}"><div style="width:${s[x]/12*100}%"></div></div></div>`).join('');
+  if(top.length)h+=`<h3>${t('top')}</h3><ul>${top.map(x=>`<li>${t('f_'+x)}</li>`).join('')}</ul>`;
+  h+=`<p class="mut warn">${t('disc')}</p><p class="mut warn">${t('nd_note')}</p>`}
+ else{const rows=(id=='cyc'?['trig','interp','hard','anx1','imp','impr','beh','rel','anx2','cost','prot']:id=='inf'?['can','cant','waste','choose']:['sit','want','pred','anx1','plan','did','hap','anx2','learn']);
+  if(id=='cyc'&&(d.ctl||[]).length){const f=[...new Set(d.ctl.map(k=>CHIP[k]))];h+=`<p>${d.ctl.map(k=>t('ch')[k]).join(', ')}</p><h3>${t('top')}</h3><ul>${f.map(x=>`<li>${t('f_'+x)}</li>`).join('')}</ul>`}
+  if(id=='cyc')[['sb','sbl','sbq'],['bl','bel','belq']].forEach(([k,o,q])=>{if((d[k]||[]).length)h+=`<p><b>${t(q)}</b><br>${d[k].map(x=>t(o)[x]).join(', ')}</p>`});
+  h+=`<table>${rows.filter(k=>d[k]!==undefined&&d[k]!=='').map(k=>`<tr><th>${t(k)}</th><td>${esc(d[k])}</td></tr>`).join('')}</table>`;
+  if(d.anx1!==undefined&&d.anx2!==undefined)h+=`<p><b>${d.anx1} → ${d.anx2}</b></p>`}
+ return h};
+const home=()=>`<h1>${t('h_title')}</h1><p>${t('h_sub')}</p><div class="loop">${t('loop').map((x,i,a)=>`<span>${x}</span>${i<a.length-1?'<b>→</b>':'<b>↻</b>'}`).join('')}</div>
+<h2>${t('h_go')}</h2><div class="go">${['prof','cyc','inf','exp','nd'].map(k=>`<button data-a="tab" data-v="${k}"><strong>${t('n_'+k)}</strong><span class="mut">${t('d_'+k)}</span></button>`).join('')}</div>
+<p class="mut" style="margin-top:20px">${t('h_priv')}</p>`;
+const intro=k=>`<h2>${t('n_'+k)}</h2><div class="card"><p>${t('d_'+k)}</p>${k=='prof'?`<p class="mut">${t('disc')}</p>`:''}<div class="row"><button class="pri" data-a="start">${t('start')}</button></div></div>`;
+const wiz=()=>{const ss=steps(W.id),s=ss[W.i],last=W.i==ss.length-1;
+ let h=`<div class="bar"><div style="width:${(W.i+1)/ss.length*100}%"></div></div><p class="mut">${t('step')} ${W.i+1} ${t('of')} ${ss.length}</p>`;
+ if(s.sum)h+=`<h2>${t(W.id=='prof'?'n_prof':'c4')}</h2><div class="card" id="rep">${sumH(W.id,W.d)}</div><div class="noprint"><label for="cl">${t('client')}</label><input type="text" id="cl" value="${esc(W.c||'')}"></div><div class="row"><button data-a="back">${t('back')}</button><button class="pri" data-a="save">${t('save')}</button><button data-a="print">${t('print')}</button></div>`;
+ else h+=`<h2>${t(s.t)}</h2>${s.h?`<p class="mut">${t(s.h)}</p>`:''}<div class="card">${s.f.map(fld).join('')}</div><div class="row">${W.i?`<button data-a="back">${t('back')}</button>`:''}<button class="pri" data-a="next">${t('next')}</button></div>`;
+ return h};
+const guide=()=>`<h2>${t('g_t')}</h2><div class="card"><h3>${t('g_i')}</h3><table>${t('g_rows').map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('')}</table></div>
+${[['g_a','g_as'],['g_p','g_ps'],['g_q','g_qs'],['g_s','g_ss'],['g_c','g_cs'],['g_w','g_ws'],['g_e','g_es']].map(([a,b])=>`<div class="card"><h3>${t(a)}</h3><ul>${t(b).map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}<p class="mut">${t('g_n')}</p>`;
+const hist=()=>{const a=db().reverse();return`<h2>${t('hs_t')}</h2>${msg?`<p class="warn">${msg}</p>`:''}${a.length?a.map(r=>`<div class="card"><details><summary>${t('ty')[r.id]} · ${new Date(r.date).toLocaleDateString(S.lang)}${r.client?' · '+esc(r.client):''}</summary>${sumH(r.id,r.d)}<div class="row"><button data-a="del" data-v="${r.date}">${t('del')}</button></div></details></div>`).join('')+`<div class="row"><button data-a="exp">${t('exp')}</button><button data-a="clr">${t('clr')}</button></div>`:`<p class="mut">${t('hs_e')}</p>`}`};
+function view(){document.documentElement.dataset.theme=S.theme;document.documentElement.lang=S.lang;
+ $('#bl').textContent=S.lang=='ro'?'EN':'RO';$('#bt').textContent=S.theme=='dark'?'☀':'☾';
+ $('#nv').innerHTML=['home','prof','cyc','inf','exp','nd','gd','hs'].map(k=>`<button data-a="tab" data-v="${k}" class="${S.tab==k?'on':''}">${t('n_'+k)}</button>`).join('');
+ const m=$('#m');m.innerHTML=S.tab=='home'?home():S.tab=='gd'?guide():S.tab=='hs'?hist():W?wiz():S.tab=='nd'?hub():intro(S.tab)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
+ if(a=='tab'){S.tab=v;W=null;msg=''}
+ else if(a=='lang'){S.lang=S.lang=='ro'?'en':'ro';st.s('ctrl.lang',S.lang)}
+ else if(a=='theme'){S.theme=S.theme=='dark'?'light':'dark';st.s('ctrl.theme',S.theme)}
+ else if(a=='start')W={id:S.tab,i:0,d:{}};
+ else if(a=='sn'){W={id:v,i:0,d:{}};scrollTo(0,0)}
+ else if(a=='next'){W.i++;scrollTo(0,0)}
+ else if(a=='back'){W.c=($('#cl')||{}).value;W.i--;scrollTo(0,0)}
+ else if(a=='sc')W.d[b.dataset.k]=+v;
+ else if(a=='chip'){const k=b.dataset.k,c=W.d[k]=W.d[k]||[];const i=c.indexOf(v);i<0?c.push(v):c.splice(i,1)}
+ else if(a=='save'){const x=db();x.push({id:W.id,date:new Date().toISOString(),client:$('#cl').value.trim(),d:W.d});sd(x);W=null;S.tab='hs';msg=t('saved')}
+ else if(a=='print')return print();
+ else if(a=='del'){sd(db().filter(r=>r.date!=v))}
+ else if(a=='clr'){if(confirm(t('conf')))sd([])}
+ else if(a=='exp'){const u=URL.createObjectURL(new Blob([JSON.stringify(db(),null,1)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download='ctrl-export.json';l.click();return}
+ view()});
+document.addEventListener('input',e=>{const k=e.target.dataset.k;if(!k||!W)return;W.d[k]=e.target.type=='range'?+e.target.value:e.target.value;if(e.target.type=='range')$('#o_'+k).textContent=e.target.value});
+view();
+</script>
+</body>
+</html>
